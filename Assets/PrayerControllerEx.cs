@@ -47,8 +47,13 @@ public class PrayerControllerEx : MonoBehaviour
 
     void Update()
     {
+
         IsGrounded();
         IsWall();
+        if (!m_isWallRunning)
+        {
+            m_rb.useGravity = true;
+        }
         // 方向の入力を取得し、方向を求める
         float v = Input.GetAxisRaw("Vertical");
         float h = Input.GetAxisRaw("Horizontal");
@@ -86,14 +91,11 @@ public class PrayerControllerEx : MonoBehaviour
         }
 
         //壁に捕まる処理。空中にいるときと近くに壁があるとき
-        if (Input.GetButton("Fire1") && m_isRightWall)
+        if ((Input.GetButton("Fire1") && m_isRightWall) || (Input.GetButton("Fire1") && m_isLeftWall))
         {
             StartWallRun();
         }
-        if (Input.GetButton("Fire1") && m_isLeftWall)
-        {
-            StartWallRun();
-        }
+
 
     }
 
@@ -126,7 +128,7 @@ public class PrayerControllerEx : MonoBehaviour
         m_isRightWall = Physics.Raycast(start, rightEnd);
         m_isLeftWall = Physics.Raycast(start, leftEnd);
 
-        if (!m_isRightWall && !m_isLeftWall)
+        if (!m_isRightWall || !m_isLeftWall)
         {
             StopWallRun();
         }
@@ -136,6 +138,8 @@ public class PrayerControllerEx : MonoBehaviour
 
     void StartWallRun()
     {
+
+        Debug.Log("StartWallRun");
         m_rb.useGravity = false;
         m_isWallRunning = true;
 
@@ -147,18 +151,20 @@ public class PrayerControllerEx : MonoBehaviour
 
         if (m_isRightWall)
         {
-            m_rb.AddForce(this.transform.right * m_wallRunForce / m_pushPower); //壁に張り付きながら走りたいので、壁のある方向へ力をかけている
+            m_rb.AddForce(this.transform.right * m_wallRunForce / m_pushPower * Time.deltaTime); //壁に張り付きながら走りたいので、壁のある方向へ力をかけている
         }
         else
         {
-            m_rb.AddForce(-this.transform.right * m_wallRunForce / m_pushPower);
-            Debug.Log(this.transform.right);
+            m_rb.AddForce(-this.transform.right * m_wallRunForce / m_pushPower * Time.deltaTime);
+            //Debug.Log(this.transform.right);
         }
 
     }
 
     void StopWallRun()
     {
+
+        Debug.Log("StopWallRun");
         m_isWallRunning = false;
         m_rb.useGravity = true;
     }
