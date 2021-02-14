@@ -15,10 +15,13 @@ public class EnemyEyeField : MonoBehaviour
     [SerializeField] bool m_displayGizmo = true;
 
 
+    EnemyEffects m_ef;
     EnemyController m_ec;
+    GameObject m_gEf;
     private void Start()
     {
         m_ec = GetComponentInParent<EnemyController>();
+        this.m_ef = FindObjectOfType<EnemyEffects>();
         Debug.Log(m_ec);
     }
 
@@ -37,24 +40,16 @@ public class EnemyEyeField : MonoBehaviour
         /*プレイヤーがコライダーに侵入したら*/
         if (other.tag == "Player")
         {
-            /*一定の距離以内にいるか判定する*/
-            if (m_ec.FindPlayerByYear())
+            //敵のまっすぐ前とプレイヤーの位置の角度を計算する
+            float angle = Vector3.Angle(this.transform.forward, (m_ec.m_player.transform.position - this.transform.position));
+            Debug.Log($"EyeField：プレイヤーとの角度：{angle}");
+            /*見たときに、プレイヤーとの角度が設定された範囲内でプレイヤーとの間に障害物がなかったら、あるいはプレイヤーが一定の距離内にいるならば*/
+            if ((angle <= m_eyeFieldAngle) && !m_ec.CheckObstacle(m_obstacle) || (m_ec.CheckDistance() && m_ec.CheckObstacle(m_obstacle)))
             {
-                /*プレイヤーの方向を見る*/
-                m_ec.LookAtPlayer();
-                //敵のまっすぐ前とプレイヤーの位置の角度
-                float angle = Vector3.Angle(this.transform.forward, m_ec.m_playersDirection);
-                /*見たときに、プレイヤーとの角度が設定された範囲内、かつ、プレイヤーとの間に障害物がなかったら*/
-                if ((angle <= m_eyeFieldAngle) && !m_ec.CheckObstacle(m_obstacle))
-                {
-                    /*プレイヤーを発見する*/
-                    m_ec.OnFoundPlayerByEye();
-                }
-                else
-                {
-                    m_ec.OnLostPlayer();
-                }
+                /*プレイヤーを発見する*/
+                m_ec.OnFoundPlayer();
             }
+
         }
     }
 

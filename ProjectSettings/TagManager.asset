@@ -6,6 +6,7 @@ TagManager:
   tags:
   - Bullet
   - Canonn
+  - Marker
   layers:
   - Default
   - TransparentFX
@@ -21,7 +22,7 @@ TagManager:
   - Canonn
   - Bullet
   - Enemy
-  - 
+  - NeedToHide
   - 
   - 
   - 

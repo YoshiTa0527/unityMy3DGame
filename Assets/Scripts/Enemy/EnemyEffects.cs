@@ -35,7 +35,7 @@ public class EnemyEffects : MonoBehaviour
         m_MarkPrefabs.Where(i => i.gameObject.name == "QuestionMark").ToList().ForEach(i => i.SetActive(true));
     }
 
-    public void InActiveQuestionMark() 
+    public void InActiveQuestionMark()
     {
         m_MarkPrefabs.Where(i => i.gameObject.name == "QuestionMark").ToList().ForEach(i => i.SetActive(false));
     }
