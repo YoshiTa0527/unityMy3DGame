@@ -23,21 +23,23 @@ public class EnemyEffects : MonoBehaviour
 
     public void ActiveExclamationMark()
     {
-        m_MarkPrefabs.Where(i => i.gameObject.name == "ExclamationMark").ToList().ForEach(i => i.SetActive(true));
+        m_MarkPrefabs.Where(i => i.gameObject.name != "ExclamationMark").FirstOrDefault().SetActive(false);
+        m_MarkPrefabs.Where(i => i.gameObject.name == "ExclamationMark").FirstOrDefault().SetActive(true);
     }
     public void InActiveExxlamationMark()
     {
-        m_MarkPrefabs.Where(i => i.gameObject.name == "ExclamationMark").ToList().ForEach(i => i.SetActive(false));
+        m_MarkPrefabs.Where(i => i.gameObject.name == "ExclamationMark").FirstOrDefault().SetActive(false);
     }
 
     public void ActiveQuestionMark()
     {
-        m_MarkPrefabs.Where(i => i.gameObject.name == "QuestionMark").ToList().ForEach(i => i.SetActive(true));
+        m_MarkPrefabs.Where(i => i.gameObject.name != "QuestionMark").FirstOrDefault().SetActive(false);
+        m_MarkPrefabs.Where(i => i.gameObject.name == "QuestionMark").FirstOrDefault().SetActive(true);
     }
 
     public void InActiveQuestionMark()
     {
-        m_MarkPrefabs.Where(i => i.gameObject.name == "QuestionMark").ToList().ForEach(i => i.SetActive(false));
+        m_MarkPrefabs.Where(i => i.gameObject.name == "QuestionMark").FirstOrDefault().SetActive(false);
     }
 
 

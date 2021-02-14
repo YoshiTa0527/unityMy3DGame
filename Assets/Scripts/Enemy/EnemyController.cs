@@ -15,8 +15,8 @@ public class EnemyController : MonoBehaviour
     [SerializeField] GameObject[] m_canonnPrefabs = null;
     /// <summary> 敵の聴覚。後ろからでもこの距離まで近づいたら気づく </summary>
     [SerializeField] float m_yearDistance = 2f;
-    /// <summary> プレイヤーを見る方向  </summary>
-    Vector3 m_lookAtPos;
+    /// <summary> プレイヤーの方向  </summary>
+    Vector3 m_playerDir;
     /// <summary>巡回させるために必要なtransform</summary>
     [SerializeField] Transform[] m_routeObjects = null;
     /// <summary>インデックス番号</summary>
@@ -84,9 +84,9 @@ public class EnemyController : MonoBehaviour
     public bool CheckObstacle(LayerMask obstacle)
     {
         RaycastHit hit;
-        Ray ray = new Ray(this.transform.position, m_lookAtPos);
-        bool isWall = Physics.Raycast(ray, out hit, Vector3.Distance(this.transform.position, m_lookAtPos), obstacle);
-        Debug.DrawRay(this.transform.position, m_lookAtPos, Color.red);
+        Ray ray = new Ray(this.transform.position, m_playerDir);
+        bool isWall = Physics.Raycast(ray, out hit, Vector3.Distance(this.transform.position, m_player.transform.position), obstacle);
+        Debug.DrawRay(this.transform.position, m_playerDir, Color.blue);
 
         if (isWall) Debug.Log($"CheckPlayer:{hit.collider.name}に当たっている。isWall = {isWall}");
 
@@ -106,7 +106,7 @@ public class EnemyController : MonoBehaviour
             found = true;
             Debug.Log($"CheckDistance()：プレイヤーが近くにいる！：{found}");
             m_agent.SetDestination(this.transform.position);
-            this.transform.LookAt(m_lookAtPos);
+            this.transform.LookAt(m_player.transform.position);
             return found;
         }
         else
@@ -117,7 +117,7 @@ public class EnemyController : MonoBehaviour
         }
     }
     /// <summary>
-    /// プレイヤーを見つけたときに呼び、エネミーのステイタスを変更する
+    /// プレイヤーを見つけたときに呼ばれ、エネミーのステイタスをプレイヤーを見つけた状態に変更する
     /// </summary>
     public void OnFoundPlayer()
     {
@@ -127,14 +127,15 @@ public class EnemyController : MonoBehaviour
         if (m_stayWhenFoundPlayer) m_eStatus = EnemyStatus.Stay;
         else m_eStatus = EnemyStatus.FoundPlayer;
     }
-
+    /// <summary>
+    /// プレイヤーを見失ったときに呼ばれ、エネミーのステイタスをSearchに変更する。
+    /// </summary>
     public void OnLostPlayer()
     {
         Debug.Log("OnLostPlayer():プレイヤーを見失った");
-        m_ef.InActiveExxlamationMark();
+        m_ef.ActiveQuestionMark();
         UpdateCannonState(CanonStatus.NonActive);
         m_eStatus = EnemyStatus.Search;
-        // m_eStatus = EnemyStatus.Patrol;
     }
 
     void UpdateCannonState(CanonStatus newState)
@@ -148,13 +149,10 @@ public class EnemyController : MonoBehaviour
 
     private void Update()
     {
-        ShowEnemyStatus();
         if (m_player)
         {
-
-            m_lookAtPos = m_player.transform.position - this.transform.position;
-            m_lookAtPos.y = 0;
-            m_lookAtPos = m_player.transform.position + Vector3.up;
+            m_playerDir = m_player.transform.position - this.transform.position;
+            m_playerDir.y = 0;
 
             switch (m_eStatus)
             {
@@ -176,7 +174,7 @@ public class EnemyController : MonoBehaviour
                  　その場で立ち止まり、プレイヤーの方を向き続ける*/
                 case EnemyStatus.Stay:
                     {
-                        this.transform.LookAt(m_lookAtPos);
+                        this.transform.LookAt(m_player.transform.position);
                         m_agent.SetDestination(this.transform.position);
                     }
                     break;
@@ -186,7 +184,7 @@ public class EnemyController : MonoBehaviour
                     {
                         m_audio.PlaySound("EnemyFound");
                         m_elc.ChangeLightColorWhenFound();
-                        this.transform.LookAt(m_lookAtPos);
+                        this.transform.LookAt(m_player.transform.position);
                         m_agent.SetDestination(m_player.transform.position);
                         if (!m_agent.pathPending && m_agent.remainingDistance <= m_keepDistance)
                         {
@@ -210,7 +208,6 @@ public class EnemyController : MonoBehaviour
                         /*プレイヤーを見失った時のステータス*/
                         m_timer += Time.deltaTime;
                         //Debug.Log($"ステータス：{m_eStatus}。タイマー：{m_timer}");
-                        m_ef.ActiveQuestionMark();
                         m_agent.SetDestination(this.transform.position);
                         if (m_timer >= m_roveTime)
                         {
@@ -224,9 +221,7 @@ public class EnemyController : MonoBehaviour
                     break;
             }
         }
-
     }
-
 
 }
 

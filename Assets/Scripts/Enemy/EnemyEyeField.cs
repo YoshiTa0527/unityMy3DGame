@@ -15,6 +15,7 @@ public class EnemyEyeField : MonoBehaviour
     [SerializeField] bool m_displayGizmo = true;
 
 
+
     EnemyEffects m_ef;
     EnemyController m_ec;
     GameObject m_gEf;
@@ -29,6 +30,7 @@ public class EnemyEyeField : MonoBehaviour
     {
         if (m_displayGizmo)
         {
+            m_ec.CheckObstacle(m_obstacle);
             Handles.color = Color.red;
             Handles.DrawSolidArc(transform.position, Vector3.up,
                                 Quaternion.Euler(0f, -m_eyeFieldAngle, 0f) * transform.forward,
@@ -49,7 +51,10 @@ public class EnemyEyeField : MonoBehaviour
                 /*プレイヤーを発見する*/
                 m_ec.OnFoundPlayer();
             }
-
+            else if (m_ec.CheckObstacle(m_obstacle))
+            {
+                m_ec.OnLostPlayer();
+            }
         }
     }
 
