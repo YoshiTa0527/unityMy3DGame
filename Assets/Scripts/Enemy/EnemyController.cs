@@ -87,9 +87,7 @@ public class EnemyController : MonoBehaviour
         Ray ray = new Ray(this.transform.position, m_playerDir);
         bool isWall = Physics.Raycast(ray, out hit, Vector3.Distance(this.transform.position, m_player.transform.position), obstacle);
         Debug.DrawRay(this.transform.position, m_playerDir, Color.blue);
-
-        if (isWall) Debug.Log($"CheckPlayer:{hit.collider.name}に当たっている。isWall = {isWall}");
-
+        if (isWall) Debug.Log($"名前：{this.gameObject.name}。CheckPlayer:{hit.collider.name}に当たっている。isWall = {isWall}");
         return isWall;
     }
     /// <summary>
