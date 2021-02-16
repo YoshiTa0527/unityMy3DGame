@@ -14,8 +14,6 @@ public class EnemyEyeField : MonoBehaviour
     [SerializeField] SphereCollider m_searchArea;
     [SerializeField] bool m_displayGizmo = true;
 
-
-
     EnemyEffects m_ef;
     EnemyController m_ec;
     GameObject m_gEf;
@@ -23,6 +21,7 @@ public class EnemyEyeField : MonoBehaviour
     {
         m_ec = GetComponentInParent<EnemyController>();
         this.m_ef = FindObjectOfType<EnemyEffects>();
+
         Debug.Log(m_ec);
     }
 

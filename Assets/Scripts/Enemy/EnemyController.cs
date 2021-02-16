@@ -147,8 +147,9 @@ public class EnemyController : MonoBehaviour
 
     private void Update()
     {
-        if (m_player)
+        if (m_player)/*プレイヤーがいるなら行動する*/
         {
+
             m_playerDir = m_player.transform.position - this.transform.position;
             m_playerDir.y = 0;
 
@@ -203,7 +204,7 @@ public class EnemyController : MonoBehaviour
                     {
                         m_audio.PlaySound("EnemyLost");
                         m_elc.ChangeLightColorWhenLost();
-                        /*プレイヤーを見失った時のステータス*/
+
                         m_timer += Time.deltaTime;
                         //Debug.Log($"ステータス：{m_eStatus}。タイマー：{m_timer}");
                         m_agent.SetDestination(this.transform.position);
@@ -219,6 +220,8 @@ public class EnemyController : MonoBehaviour
                     break;
             }
         }
+        else /*プレイヤーがいないなら敵オブジェクトを消す*/
+        { Debug.LogError($"EnemyController Update()：プレイヤーが居ない{m_player.name}"); }
     }
 
 }

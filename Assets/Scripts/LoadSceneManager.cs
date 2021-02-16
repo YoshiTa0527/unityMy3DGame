@@ -35,7 +35,7 @@ public class LoadSceneManager : MonoBehaviour
                 if (Input.GetButtonDown("Fire1"))
                 {
                     Debug.Log("SceneStatus：Fade");
-                    StartCoroutine("Fade");
+                    StartCoroutine("FadeIN");
                     m_status = SceneStatus.ClickToStart;
                 }
                 break;
