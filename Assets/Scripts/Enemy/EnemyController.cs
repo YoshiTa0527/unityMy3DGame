@@ -36,6 +36,7 @@ public class EnemyController : MonoBehaviour
     EnemyLightController m_elc;
     EnemyAudioManager m_audio;
     public GameObject m_player;
+    EnemyEyeField m_eef;
 
     /// <summary>
     /// デバッグ用。
@@ -43,6 +44,11 @@ public class EnemyController : MonoBehaviour
     public void ShowEnemyStatus()
     {
         Debug.Log($"ShowEnemyStatus():{m_eStatus}");
+    }
+
+    public int GetEnemyStatus()
+    {
+        return (int)m_eStatus;
     }
 
     private void Start()
@@ -56,6 +62,7 @@ public class EnemyController : MonoBehaviour
         if (!m_player) Debug.LogError("プレイヤーが取得できていない");
         else Debug.Log($"プレイヤーを取得。{m_player.name}");
         m_ef = GetComponentInChildren<EnemyEffects>();
+        m_eef = GetComponentInChildren<EnemyEyeField>();
         this.transform.position = m_routeObjects[0].position;
         GoToNextPoint();
     }
@@ -87,33 +94,11 @@ public class EnemyController : MonoBehaviour
         Ray ray = new Ray(this.transform.position, m_playerDir);
         bool isWall = Physics.Raycast(ray, out hit, Vector3.Distance(this.transform.position, m_player.transform.position), obstacle);
         Debug.DrawRay(this.transform.position, m_playerDir, Color.blue);
-        if (isWall) Debug.Log($"名前：{this.gameObject.name}。CheckPlayer:{hit.collider.name}に当たっている。isWall = {isWall}");
+        if (isWall) Debug.Log($"CheckObstacle::名前：{this.gameObject.name}。CheckPlayer:{hit.collider.name}に当たっている。isWall = {isWall}");
+        else Debug.Log($"CheckObstacle::名前：{this.gameObject.name}。 壁以外に当たっている。isWall = {isWall}");
         return isWall;
     }
-    /// <summary>
-    /// プレイヤーが一定の距離にいるなら立ち止まり、プレイヤーの方を見てtrueを返す
-    /// </summary>
-    public bool CheckDistance()
-    {
-        Debug.Log("CheckDistance()：CheckDistance()が呼ばれた");
-        bool found = false;
-        /*プレイヤーまでの距離*/
-        float distance = Vector3.Distance(this.transform.position, m_player.transform.position);
-        if (distance <= m_yearDistance)
-        {
-            found = true;
-            Debug.Log($"CheckDistance()：プレイヤーが近くにいる！：{found}");
-            m_agent.SetDestination(this.transform.position);
-            this.transform.LookAt(m_player.transform.position);
-            return found;
-        }
-        else
-        {
-            found = false;
-            Debug.Log($"CheckDistance()：{found}");
-            return found;
-        }
-    }
+   
     /// <summary>
     /// プレイヤーを見つけたときに呼ばれ、エネミーのステイタスをプレイヤーを見つけた状態に変更する
     /// </summary>
@@ -128,7 +113,7 @@ public class EnemyController : MonoBehaviour
     /// <summary>
     /// プレイヤーを見失ったときに呼ばれ、エネミーのステイタスをSearchに変更する。
     /// </summary>
-    public void OnLostPlayer()
+    public void OnSerchPlayer()
     {
         Debug.Log("OnLostPlayer():プレイヤーを見失った");
         m_ef.ActiveQuestionMark();
@@ -158,6 +143,7 @@ public class EnemyController : MonoBehaviour
                 /*プレイヤーを見つけていないときのステータス。指定された場所を巡回する*/
                 case EnemyStatus.Patrol:
                     {
+                        m_eef.OpenSearchArea();
                         //Debug.Log($"巡回中。目的地までの距離：{m_agent.remainingDistance}");
                         if (!m_agent.pathPending && m_agent.remainingDistance < 0.5f)
                         {
@@ -181,7 +167,7 @@ public class EnemyController : MonoBehaviour
                   プレイヤーの方を向きながら、プレイヤーを追いかける。*/
                 case EnemyStatus.FoundPlayer:
                     {
-                        m_audio.PlaySound("EnemyFound");
+                        //m_audio.PlaySound("EnemyFound");
                         m_elc.ChangeLightColorWhenFound();
                         this.transform.LookAt(m_player.transform.position);
                         m_agent.SetDestination(m_player.transform.position);
@@ -202,20 +188,13 @@ public class EnemyController : MonoBehaviour
                 /*プレイヤーを見失った直後に遷移するステータス。一定時間その場で立ち止まり、その後Patrolステータスに移動する*/
                 case EnemyStatus.Search:
                     {
-                        m_audio.PlaySound("EnemyLost");
-                        m_elc.ChangeLightColorWhenLost();
+                        //m_eef.CloseSearchArea();
+                        StartCoroutine(m_eef.CloseSearchAreaCorutine());
 
-                        m_timer += Time.deltaTime;
-                        //Debug.Log($"ステータス：{m_eStatus}。タイマー：{m_timer}");
+                        //m_audio.PlaySound("EnemyLost");
+                        m_elc.ChangeLightColorWhenLost();
                         m_agent.SetDestination(this.transform.position);
-                        if (m_timer >= m_roveTime)
-                        {
-                            m_timer = 0f;
-                            m_ef.InActiveQuestionMark();
-                            m_elc.ResetLightColor();
-                            Debug.Log($"パトロールに切り替えます");
-                            m_eStatus = EnemyStatus.Patrol;
-                        }
+                        StartCoroutine("SearchStatusMove");
                     }
                     break;
             }
@@ -224,12 +203,26 @@ public class EnemyController : MonoBehaviour
         { Debug.LogError($"EnemyController Update()：プレイヤーが居ない{m_player.name}"); }
     }
 
+    /// <summary>
+    /// サーチ状態の時の挙動のコルーチン
+    /// </summary>
+    /// <returns></returns>
+    IEnumerator SearchStatusMove()
+    {
+        Debug.Log("SearchStatusMove");
+        yield return new WaitForSeconds(m_roveTime);
+        m_ef.InActiveQuestionMark();
+        m_elc.ResetLightColor();
+        yield return new WaitForSeconds(2f);
+        m_eStatus = EnemyStatus.Patrol;
+    }
+
 }
 
 enum EnemyStatus
 {
-    Patrol,
-    FoundPlayer,
-    Stay,
-    Search,
+    Patrol = 1,
+    FoundPlayer = 2,
+    Stay = 3,
+    Search = 4,
 }
