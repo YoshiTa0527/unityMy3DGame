@@ -100,16 +100,14 @@ public class EnemyEyeField : MonoBehaviour
             }
             else
             {
-                if (angle <= m_eyeFieldAngle || CheckDistance())
+                if ((angle <= m_eyeFieldAngle || CheckDistance()) && m_ec.GetEnemyStatus() == 2)
                 {
                     /*found中だったら*/
-                    if (m_ec.GetEnemyStatus() == 2)
-                    {
-                        m_ec.OnSerchPlayer();
-                    }
+                    m_ec.OnSerchPlayer();
+
                 }
-              
-               
+
+
 
             }
         }

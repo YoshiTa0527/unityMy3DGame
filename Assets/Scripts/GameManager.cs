@@ -5,6 +5,12 @@ using UnityEngine;
 public class GameManager : MonoBehaviour
 {
     [SerializeField] GameState m_gameState;
+    FadeController m_fc;
+    private void Start()
+    {
+        m_fc = FindObjectOfType<FadeController>();
+        m_fc.FadeIn();
+    }
     public void ChangeGameState(GameState newState)
     {
         m_gameState = newState;

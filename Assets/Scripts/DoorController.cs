@@ -9,7 +9,7 @@ public class DoorController : MonoBehaviour
     private void Start()
     {
         this.m_anim = GetComponent<Animator>();
-        if (this.m_anim != null) { Debug.LogError("アニメーターを取得できていない  "); }
+        if (this.m_anim == null) { Debug.LogError("アニメーターを取得できていない  "); }
         else { Debug.Log($"DoorController：{this.m_anim.gameObject.name}"); }
         CloseDoor();
     }
