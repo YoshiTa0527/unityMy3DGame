@@ -37,7 +37,7 @@ public class EnemyController : MonoBehaviour
     EnemyAudioManager m_audio;
     public GameObject m_player;
     EnemyEyeField m_eef;
-
+    AutomationDoorController[] m_adc;
     /// <summary>
     /// デバッグ用。
     /// </summary>
@@ -59,6 +59,9 @@ public class EnemyController : MonoBehaviour
         m_agent = GetComponent<NavMeshAgent>();
         m_eStatus = EnemyStatus.Patrol;
         m_player = GameObject.FindGameObjectWithTag("Player");
+        m_adc = FindObjectsOfType<AutomationDoorController>();
+        if (m_adc != null) Debug.Log($"{this.gameObject.name}::AutomationDoorControllerを取得::{m_adc.Length + 1}個");
+        else Debug.LogError("AutomationDoorControllerを取得できていない");
         if (!m_player) Debug.LogError("プレイヤーが取得できていない");
         else Debug.Log($"プレイヤーを取得。{m_player.name}");
         m_ef = GetComponentInChildren<EnemyEffects>();
@@ -98,13 +101,14 @@ public class EnemyController : MonoBehaviour
         else Debug.Log($"CheckObstacle::名前：{this.gameObject.name}。 壁以外に当たっている。isWall = {isWall}");
         return isWall;
     }
-   
+
     /// <summary>
     /// プレイヤーを見つけたときに呼ばれ、エネミーのステイタスをプレイヤーを見つけた状態に変更する
     /// </summary>
     public void OnFoundPlayer()
     {
         Debug.Log("OnFoundPlayerByEye:プレイヤーを見つけた");
+        ChangeDoorBool(true);
         m_ef.ActiveExclamationMark();
         UpdateCannonState(CanonStatus.Active);
         if (m_stayWhenFoundPlayer) m_eStatus = EnemyStatus.Stay;
@@ -116,6 +120,7 @@ public class EnemyController : MonoBehaviour
     public void OnSerchPlayer()
     {
         Debug.Log("OnLostPlayer():プレイヤーを見失った");
+        ChangeDoorBool(false);
         m_ef.ActiveQuestionMark();
         UpdateCannonState(CanonStatus.NonActive);
         m_eStatus = EnemyStatus.Search;
@@ -129,6 +134,11 @@ public class EnemyController : MonoBehaviour
         }
     }
 
+    void ChangeDoorBool(bool doorBool)
+    {
+        Debug.Log($"{this.gameObject.name}::ドアのステータスを変更::{doorBool}");
+        this.m_adc.ToList().ForEach(door => door.m_isLocked = doorBool);
+    }
 
     private void Update()
     {
@@ -168,6 +178,7 @@ public class EnemyController : MonoBehaviour
                 case EnemyStatus.FoundPlayer:
                     {
                         //m_audio.PlaySound("EnemyFound");
+
                         m_elc.ChangeLightColorWhenFound();
                         this.transform.LookAt(m_player.transform.position);
                         m_agent.SetDestination(m_player.transform.position);
@@ -189,6 +200,7 @@ public class EnemyController : MonoBehaviour
                 case EnemyStatus.Search:
                     {
                         //m_eef.CloseSearchArea();
+
                         StartCoroutine(m_eef.CloseSearchAreaCorutine());
 
                         //m_audio.PlaySound("EnemyLost");

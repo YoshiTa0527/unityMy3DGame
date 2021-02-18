@@ -14,6 +14,10 @@ public class DoorController : MonoBehaviour
         CloseDoor();
     }
 
+    public bool GetDoorBool()
+    {
+        return this.m_anim.GetBool("IsOpened");
+    }
     public void OpenDoor()
     {
         this.m_anim.SetBool("IsOpened", true);

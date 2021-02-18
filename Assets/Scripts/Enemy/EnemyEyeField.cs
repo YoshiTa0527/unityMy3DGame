@@ -106,9 +106,6 @@ public class EnemyEyeField : MonoBehaviour
                     m_ec.OnSerchPlayer();
 
                 }
-
-
-
             }
         }
     }
@@ -140,7 +137,6 @@ public class EnemyEyeField : MonoBehaviour
         {
             Debug.Log($"Exit{other.gameObject.name}");
             m_enterColider = false;
-
         }
     }
 }

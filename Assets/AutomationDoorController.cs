@@ -6,6 +6,8 @@ using System.Linq;
 public class AutomationDoorController : MonoBehaviour
 {
     DoorController[] m_door;
+    [SerializeField] DoorStatus m_doorStatus;
+    public bool m_isLocked { get; set; }
     private void Start()
     {
         m_door = GetComponentsInChildren<DoorController>();
@@ -16,7 +18,22 @@ public class AutomationDoorController : MonoBehaviour
         if (other.tag == "Player")
         {
             Debug.Log("接触Enter");
-            m_door.ToList().ForEach(d => d.OpenDoor());
+
+            switch (m_doorStatus)
+            {
+                case DoorStatus.StartDoor:
+                    m_door.ToList().ForEach(d => d.OpenDoor());
+                    break;
+                case DoorStatus.GoalDoor:
+                    if (!m_isLocked)
+                    {
+                        m_door.ToList().ForEach(d => d.OpenDoor());
+                    }
+                    break;
+                default:
+                    m_door.ToList().ForEach(d => d.OpenDoor());
+                    break;
+            }
         }
     }
 
@@ -25,7 +42,30 @@ public class AutomationDoorController : MonoBehaviour
         if (other.tag == "Player")
         {
             Debug.Log("接触Exit");
-            m_door.ToList().ForEach(d => d.CloseDoor());
+
+            switch (m_doorStatus)
+            {
+                case DoorStatus.StartDoor:
+                    m_door.ToList().ForEach(d => d.CloseDoor());
+                    break;
+                case DoorStatus.GoalDoor:
+                    if (!m_isLocked)
+                    {
+                        m_door.ToList().ForEach(d => d.CloseDoor());
+                    }
+                    break;
+                default:
+                    m_door.ToList().ForEach(d => d.CloseDoor());
+                    break;
+            }
+
         }
     }
+}
+
+
+enum DoorStatus
+{
+    StartDoor = 1,
+    GoalDoor = 2,
 }
