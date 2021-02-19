@@ -549,9 +549,10 @@ MonoBehaviour:
   m_eyeFieldAngle: 45
   m_obstacle:
     serializedVersion: 2
-    m_Bits: 512
+    m_Bits: 33280
   m_searchArea: {fileID: 8847720296040083462}
-  m_displayGizmo: 1
+  m_displayGizmo: 0
+  m_yearDistance: 2
 --- !u!1 &8847720296051794380
 GameObject:
   m_ObjectHideFlags: 0
@@ -668,8 +669,6 @@ MonoBehaviour:
   m_canonnPrefabs: []
   m_yearDistance: 4
   m_routeObjects:
-  - {fileID: 0}
-  - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}
   m_stayWhenFoundPlayer: 0

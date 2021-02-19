@@ -48,7 +48,7 @@ public class EnemyController : MonoBehaviour
 
     public int GetEnemyStatus()
     {
-        return (int)m_eStatus;
+        return (int)this.m_eStatus;
     }
 
     private void Start()
@@ -169,6 +169,7 @@ public class EnemyController : MonoBehaviour
                  　その場で立ち止まり、プレイヤーの方を向き続ける*/
                 case EnemyStatus.Stay:
                     {
+                        m_elc.ChangeLightColorWhenFound();
                         this.transform.LookAt(m_player.transform.position);
                         m_agent.SetDestination(this.transform.position);
                     }

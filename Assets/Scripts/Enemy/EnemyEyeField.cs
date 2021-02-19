@@ -87,7 +87,7 @@ public class EnemyEyeField : MonoBehaviour
         if (m_enterColider)
         {
             //敵のまっすぐ前とプレイヤーの位置の角度を計算する
-            float angle = Vector3.Angle(this.transform.forward, (m_ec.m_player.transform.position - this.transform.position));
+            float angle = Vector3.Angle(this.transform.forward, (this.m_ec.m_player.transform.position - this.transform.position));
             //Debug.Log($"EyeField：プレイヤーとの角度：{angle}");
             /*見たときに、プレイヤーとの角度が設定された範囲内でプレイヤーとの間に障害物がなかったら、あるいはプレイヤーが一定の距離内にいるならば*/
             if (!m_ec.CheckObstacle(m_obstacle))
@@ -100,7 +100,7 @@ public class EnemyEyeField : MonoBehaviour
             }
             else
             {
-                if ((angle <= m_eyeFieldAngle || CheckDistance()) && m_ec.GetEnemyStatus() == 2)
+                if ((angle <= m_eyeFieldAngle || CheckDistance()) && (m_ec.GetEnemyStatus() == 2 || m_ec.GetEnemyStatus() == 3))
                 {
                     /*found中だったら*/
                     m_ec.OnSerchPlayer();
@@ -108,8 +108,13 @@ public class EnemyEyeField : MonoBehaviour
                 }
             }
         }
+        //else if (m_ec.GetEnemyStatus() != 1)
+        //{
+        //    m_ec.OnSerchPlayer();
+        //}
     }
 
+#if UNITY_EDITOR
     private void OnDrawGizmos()
     {
         if (m_displayGizmo)
@@ -121,6 +126,7 @@ public class EnemyEyeField : MonoBehaviour
                                 m_eyeFieldAngle * 2f, m_searchArea.radius);
         }
     }
+#endif
 
     private void OnTriggerEnter(Collider other)
     {
@@ -137,6 +143,7 @@ public class EnemyEyeField : MonoBehaviour
         {
             Debug.Log($"Exit{other.gameObject.name}");
             m_enterColider = false;
+            m_ec.OnSerchPlayer();
         }
     }
 }

@@ -2,8 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class HealthItem : ItemBase
+public class SuperItem : ItemBase
 {
-
-
+    
 }
