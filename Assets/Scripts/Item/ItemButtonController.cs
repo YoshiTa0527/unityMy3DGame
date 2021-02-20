@@ -46,4 +46,9 @@ public class ItemButtonController : MonoBehaviour
             m_itemCountText.text = m_ism.GetItemBaseList().Where(item => item.GetItemName() == this.m_itemNameText.text).Count().ToString();
         }
     }
+
+    public void UseItem()
+    {
+        m_ism.GetItemBaseList().Where(item => item.GetItemName() == this.m_itemNameText.text).First().Use();
+    }
 }

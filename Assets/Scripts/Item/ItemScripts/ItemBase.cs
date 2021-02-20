@@ -47,4 +47,10 @@ public class ItemBase : MonoBehaviour
             else { Debug.LogError("ハイドポジションが設定されていない"); }
         }
     }
+
+    public virtual void Use()
+    {
+        Debug.Log("アイテムを使います");
+        m_ism.RemoveFromList(this);
+    }
 }

@@ -1,8 +1,7 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
-using System.Linq;
 
 
 /// <summary>
@@ -16,6 +15,11 @@ public class ItemSlotManager : MonoBehaviour
     [SerializeField] GameObject m_itemButtonPanelPrefab = null;
     /// <summary>アイテムからImageが取得できなかった場合に設定するImage</summary>
     [SerializeField] Sprite m_alterImage;
+    /// <summary>選択したアイテムをこのゲームオブジェクトの子要素にして表示する</summary>
+    [SerializeField] GameObject m_useItemPanel = null;
+
+    /// <summary>アイテム取得履歴を保存しておくためにもう一つリストを作る</summary>
+    List<ItemBase> m_getItemBaseHisory = new List<ItemBase>();
 
     ItemBase m_newItem;
     List<ItemBase> m_itemBase = new List<ItemBase>();
@@ -40,6 +44,7 @@ public class ItemSlotManager : MonoBehaviour
         Debug.Log("ItemSlotManager::呼ばれた");
         /*とりあえずリストに加える*/
         m_itemBase.Add(item);
+        m_getItemBaseHisory.Add(item);
         m_newItem = item;
         CreateItemPanel();
         Debug.Log("ItemSlotManager::終了");
@@ -47,7 +52,9 @@ public class ItemSlotManager : MonoBehaviour
 
     public void RemoveFromList(ItemBase item)
     {
+        Debug.Log($"Remove::アイテムをリムーブする前{m_itemBase.Count()}");
         m_itemBase.Remove(item);
+        Debug.Log($"Remove::アイテムをリムーブする後{m_itemBase.Count()}");
     }
 
     /// <summary>
@@ -58,17 +65,16 @@ public class ItemSlotManager : MonoBehaviour
         if (newItem != null && m_itemBase != null)
         {
             /*そのアイテムを持っているかどうかチェックする*/
-            /*リストの中に、同じ名前のアイテムが幾つあるか数える*/
-            int itemCount = m_itemBase.Where(item => newItem.GetItemName() == item.GetItemName()).Count();
-            /*アイテムの個数が一個だけだったら初めて入手したアイテム*/
+            /*取得履歴リストの中に、取得したアイテムと同じ名前のアイテムがあるかどうかを確認する*/
+            int itemCount = m_getItemBaseHisory.Where(item => newItem.GetItemName() == item.GetItemName()).Count();
             if (itemCount == 1)
             {
-                Debug.Log($"CheckAlreadyExist::新しいアイテムを{itemCount}個入手しました");
+                Debug.Log($"CheckAlreadyExist::新しいアイテムを入手しました");
                 return false;
             }
             else
             {
-                Debug.Log($"CheckAlreadyExist::同じアイテムを既に{itemCount}個持っています");
+                Debug.Log($"CheckAlreadyExist::同じアイテムを{itemCount}持っています");
                 return true;
             }
         }
@@ -100,11 +106,22 @@ public class ItemSlotManager : MonoBehaviour
         Debug.Log($"CheckElements()::現在の配列の長さ{m_itemBase.Count}");
         Debug.Log($"CheckElements()::リストの最初のアイテム{m_itemBase.First()}");
         Debug.Log($"CheckElements()::リストの最後のアイテム{m_itemBase.Last()}");
+
+        Debug.Log($"CheckElements()::履歴の配列の長さ{m_getItemBaseHisory.Count}");
+        Debug.Log($"CheckElements()::履歴リストの最初のアイテム{m_getItemBaseHisory.First()}");
+        Debug.Log($"CheckElements()::履歴リストの最後のアイテム{m_getItemBaseHisory.Last()}");
         if (m_itemBase != null)
         {
             var counter = m_itemBase.GroupBy(item => item.GetType())
                             .Select(item => new { Key = item.Key, Count = item.Count() }).ToArray();
             foreach (var item in counter)
+            {
+                Debug.Log($"アイテム{item.Key}を{item.Count}個所持しています");
+            }
+
+            var counter2 = m_getItemBaseHisory.GroupBy(item => item.GetType())
+                            .Select(item => new { Key = item.Key, Count = item.Count() }).ToArray();
+            foreach (var item in counter2)
             {
                 Debug.Log($"アイテム{item.Key}を{item.Count}個所持しています");
             }
@@ -120,6 +137,7 @@ public class ItemSlotManager : MonoBehaviour
         m_inventoryIsActive = false;
         m_anim.SetBool("IsActive", m_inventoryIsActive);
         m_itemBase.Add(m_emptyItem);
+        m_getItemBaseHisory.Add(m_emptyItem);
         CreateItemPanel();
 
     }
@@ -145,8 +163,5 @@ public class ItemSlotManager : MonoBehaviour
         }
 
     }
-    /// <summary>
-    /// インベントリーが開いている状態の時に、選択されているボタンをクローンするスクリプトを書いてね
-    /// </summary>
-    void SetUseItemPanel() { }
+
 }
