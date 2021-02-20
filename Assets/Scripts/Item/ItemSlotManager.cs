@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using System.Linq;
 
+
 /// <summary>
 /// 取得したアイテムをアイテムスロットに表示するスクリプト
 /// </summary>
@@ -14,15 +15,15 @@ public class ItemSlotManager : MonoBehaviour
     /// <summary>アイテムの情報を表示するボタンのプレハブ</summary>
     [SerializeField] GameObject m_itemButtonPanelPrefab = null;
     /// <summary>アイテムからImageが取得できなかった場合に設定するImage</summary>
-    [SerializeField] Image m_alterImage;
-
+    [SerializeField] Sprite m_alterImage;
 
     ItemBase m_newItem;
     List<ItemBase> m_itemBase = new List<ItemBase>();
 
     [SerializeField] EmptyItem m_emptyItem;
-    [SerializeField] HealthItem m_hItem;
-    [SerializeField] SuperItem m_sItem;
+
+    Animator m_anim;
+
 
 
     public List<ItemBase> GetItemBaseList()
@@ -41,8 +42,6 @@ public class ItemSlotManager : MonoBehaviour
         m_itemBase.Add(item);
         m_newItem = item;
         CreateItemPanel();
-
-
         Debug.Log("ItemSlotManager::終了");
     }
 
@@ -86,13 +85,9 @@ public class ItemSlotManager : MonoBehaviour
         if (!CheckAlreadyExist(m_newItem))
         {
             GameObject itemButton = Instantiate(m_itemButtonPanelPrefab, m_AllItemPanel.transform);
-            //Image itemImage = m_itemBase.Last().GetItemImage();
             itemButton.transform.Find("ItemNameText").GetComponent<Text>().text = m_itemBase.Last().GetItemName();
-
-
-            //if (!itemImage) itemImage = m_alterImage;
-            ////string itemName = m_itemBase.Last().GetItemName();
-            //if (itemName == null) itemName = "aiueo";
+            itemButton.GetComponent<Image>().sprite = m_itemBase.Last().GetItemSprite();
+            if (!itemButton.GetComponent<Image>().sprite) itemButton.GetComponent<Image>().sprite = m_alterImage;
         }
 
     }
@@ -114,26 +109,18 @@ public class ItemSlotManager : MonoBehaviour
                 Debug.Log($"アイテム{item.Key}を{item.Count}個所持しています");
             }
         }
-
     }
 
 
 
+    bool m_inventoryIsActive;
     private void Start()
     {
-
+        m_anim = m_AllItemPanel.GetComponent<Animator>();
+        m_inventoryIsActive = false;
+        m_anim.SetBool("IsActive", m_inventoryIsActive);
         m_itemBase.Add(m_emptyItem);
         CreateItemPanel();
-        //CreateItemPanel();
-        //m_itemBase.Add(m_hItem);
-        //m_itemBase.Add(m_sItem);
-        //Debug.Log($"リストの動作確認::現在の配列の長さ{m_itemBase.Count}");
-        //for (int i = 0; i < m_itemBase.Count; i++)
-        //{
-        //    Debug.Log($"{i}番目のアイテムは{m_itemBase[i].GetItemName()}です");
-        //}
-
-
 
     }
 
@@ -143,5 +130,23 @@ public class ItemSlotManager : MonoBehaviour
         {
             CheckElements();
         }
+
+        if (!m_inventoryIsActive && Input.GetButtonDown("OpenInventory"))
+        {
+            m_inventoryIsActive = true;
+            m_anim.SetBool("IsActive", m_inventoryIsActive);
+            Debug.Log($"メニューを開きます");
+        }
+        else if (m_inventoryIsActive && Input.GetButtonDown("OpenInventory"))
+        {
+            m_inventoryIsActive = false;
+            m_anim.SetBool("IsActive", m_inventoryIsActive);
+            Debug.Log($"メニューを閉じます");
+        }
+
     }
+    /// <summary>
+    /// インベントリーが開いている状態の時に、選択されているボタンをクローンするスクリプトを書いてね
+    /// </summary>
+    void SetUseItemPanel() { }
 }

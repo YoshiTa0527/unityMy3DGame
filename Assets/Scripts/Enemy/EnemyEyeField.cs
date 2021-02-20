@@ -13,7 +13,7 @@ public class EnemyEyeField : MonoBehaviour
     [SerializeField] LayerMask m_obstacle;
     [SerializeField] SphereCollider m_searchArea;
     [SerializeField] bool m_displayGizmo = true;
-    [SerializeField] float m_yearDistance = 2f;
+    float m_yearDistance;
 
     bool m_enterColider;
     float m_areaRadiusTemp;
@@ -60,13 +60,12 @@ public class EnemyEyeField : MonoBehaviour
         float distance = Vector3.Distance(this.transform.position, m_ec.m_player.transform.position);
         if (distance <= m_yearDistance)
         {
-
-            Debug.Log($"CheckDistance()：プレイヤーが近くにいる！");
+            Debug.Log($"CheckDistance()：プレイヤーが近くにいる！{distance}");
             return true;
         }
         else
         {
-            Debug.Log($"CheckDistance()：いない！");
+            Debug.Log($"CheckDistance()：いない！{distance}");
             return false;
         }
     }
@@ -76,6 +75,11 @@ public class EnemyEyeField : MonoBehaviour
         m_ec = GetComponentInParent<EnemyController>();
         this.m_ef = FindObjectOfType<EnemyEffects>();
         m_areaRadiusTemp = m_searchArea.radius;
+        m_yearDistance = m_ec.GetYearDistance();
+        if (m_yearDistance >= m_searchArea.radius)
+        {
+            m_yearDistance = m_searchArea.radius;
+        }
         m_yearDisTemp = m_yearDistance;
         Debug.Log($"EnemyEyeField :保存したサーチエリアの半径{m_areaRadiusTemp}。サーチエリアの半径{m_searchArea.radius}");
 

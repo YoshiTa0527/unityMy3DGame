@@ -10,7 +10,7 @@ public class ItemBase : MonoBehaviour
 {
     [SerializeField] string m_itemName = null;
     [SerializeField] string m_itemInformation = null;
-    [SerializeField] Image m_itemImage = null;
+    [SerializeField] Sprite m_itemImage = null;
     [SerializeField] Transform m_hidePos = null;
     ItemSlotManager m_ism;
     private void Start()
@@ -29,7 +29,7 @@ public class ItemBase : MonoBehaviour
         return this.m_itemInformation;
     }
 
-    public Image GetItemImage()
+    public Sprite GetItemSprite()
     {
         return this.m_itemImage;
     }

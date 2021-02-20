@@ -13,8 +13,6 @@ public class EnemyController : MonoBehaviour
     [SerializeField] EnemyStatus m_eStatus;
     /// <summary>起動させるCanonnの配列</summary>
     [SerializeField] GameObject[] m_canonnPrefabs = null;
-    /// <summary> 敵の聴覚。後ろからでもこの距離まで近づいたら気づく </summary>
-    [SerializeField] float m_yearDistance = 2f;
     /// <summary> プレイヤーの方向  </summary>
     Vector3 m_playerDir;
     /// <summary>巡回させるために必要なtransform</summary>
@@ -29,6 +27,7 @@ public class EnemyController : MonoBehaviour
     float m_timer;
     /// <summary>プレイヤーと一定の距離を取る</summary>
     float m_keepDistance = 2f;
+    [SerializeField] public float m_yearDistance = 4;
 
     EnemyEffects m_ef;
     Rigidbody m_rb;
@@ -46,6 +45,11 @@ public class EnemyController : MonoBehaviour
         Debug.Log($"ShowEnemyStatus():{m_eStatus}");
     }
 
+
+    public float GetYearDistance()
+    {
+        return this.m_yearDistance;
+    }
     public int GetEnemyStatus()
     {
         return (int)this.m_eStatus;
