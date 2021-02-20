@@ -86,7 +86,7 @@ public class ItemSlotManager : MonoBehaviour
     /// </summary>
     public void CreateItemPanel()
     {
-        /*リスト内に、同じ名前のアイテムが、一個以上存在するならパネルを作る*/
+        /*リスト内に、同じ名前のアイテムが一個より多く存在するならパネルを作る*/
         Debug.Log("CreateItemPanel::アイテムを作ります");
         if (!CheckAlreadyExist(m_newItem))
         {
@@ -139,7 +139,6 @@ public class ItemSlotManager : MonoBehaviour
         m_itemBase.Add(m_emptyItem);
         m_getItemBaseHisory.Add(m_emptyItem);
         CreateItemPanel();
-
     }
 
     private void Update()

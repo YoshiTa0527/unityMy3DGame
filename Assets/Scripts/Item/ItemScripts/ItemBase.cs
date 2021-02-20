@@ -12,6 +12,8 @@ public class ItemBase : MonoBehaviour
     [SerializeField] string m_itemInformation = null;
     [SerializeField] Sprite m_itemImage = null;
     [SerializeField] Transform m_hidePos = null;
+    /// <summary>使うときに鳴らすオーディオ</summary>
+    [SerializeField] AudioClip m_audio = null;
     ItemSlotManager m_ism;
     private void Start()
     {
@@ -51,6 +53,7 @@ public class ItemBase : MonoBehaviour
     public virtual void Use()
     {
         Debug.Log("アイテムを使います");
+        if (m_audio) { AudioSource.PlayClipAtPoint(m_audio, Camera.main.transform.position); }
         m_ism.RemoveFromList(this);
     }
 }

@@ -45,7 +45,6 @@ public class EnemyController : MonoBehaviour
         Debug.Log($"ShowEnemyStatus():{m_eStatus}");
     }
 
-
     public float GetYearDistance()
     {
         return this.m_yearDistance;
