@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.AI;
+using UnityEngine.Events;
 
 /// <summary>
 /// 敵。enemyEyeFieledにプレイヤーが侵入するか、一定距離まで近づくとプレイヤーを発見し、Canonを起動させる。
@@ -29,6 +30,9 @@ public class EnemyController : MonoBehaviour
     float m_keepDistance = 2f;
     [SerializeField] public float m_yearDistance = 4;
 
+    //[SerializeField] UnityEvent m_OnFindPlayer;
+    //[SerializeField] UnityEvent m_OnLostPlayer;
+
     EnemyEffects m_ef;
     Rigidbody m_rb;
     NavMeshAgent m_agent;
@@ -37,6 +41,9 @@ public class EnemyController : MonoBehaviour
     public GameObject m_player;
     EnemyEyeField m_eef;
     AutomationDoorController[] m_adc;
+    GameManager m_gm;
+
+
     /// <summary>
     /// デバッグ用。
     /// </summary>
@@ -56,17 +63,21 @@ public class EnemyController : MonoBehaviour
 
     private void Start()
     {
+
         m_audio = GetComponentInChildren<EnemyAudioManager>();
         m_elc = GetComponentInChildren<EnemyLightController>();
         m_rb = GetComponent<Rigidbody>();
         m_agent = GetComponent<NavMeshAgent>();
         m_eStatus = EnemyStatus.Patrol;
         m_player = GameObject.FindGameObjectWithTag("Player");
+        if (!m_player) Debug.LogError("プレイヤーが取得できていない");
+        else Debug.Log($"プレイヤーを取得。{m_player.name}");
+        m_gm = FindObjectOfType<GameManager>();
+
         m_adc = FindObjectsOfType<AutomationDoorController>();
         if (m_adc != null) Debug.Log($"{this.gameObject.name}::AutomationDoorControllerを取得::{m_adc.Length + 1}個");
         else Debug.LogError("AutomationDoorControllerを取得できていない");
-        if (!m_player) Debug.LogError("プレイヤーが取得できていない");
-        else Debug.Log($"プレイヤーを取得。{m_player.name}");
+
         m_ef = GetComponentInChildren<EnemyEffects>();
         m_eef = GetComponentInChildren<EnemyEyeField>();
         this.transform.position = m_routeObjects[0].position;
@@ -111,11 +122,11 @@ public class EnemyController : MonoBehaviour
     public void OnFoundPlayer()
     {
         Debug.Log("OnFoundPlayerByEye:プレイヤーを見つけた");
-        ChangeDoorBool(true);
+        GameObject.Find("AudioManager").GetComponent<AudioManager>().PlayFindBgm(this.GetInstanceID());
+        //m_OnFindPlayer?.Invoke();
         m_ef.ActiveExclamationMark();
         UpdateCannonState(CanonStatus.Active);
-        if (m_stayWhenFoundPlayer) m_eStatus = EnemyStatus.Stay;
-        else m_eStatus = EnemyStatus.FoundPlayer;
+        m_eStatus = EnemyStatus.FoundPlayer;
     }
     /// <summary>
     /// プレイヤーを見失ったときに呼ばれ、エネミーのステイタスをSearchに変更する。
@@ -123,7 +134,9 @@ public class EnemyController : MonoBehaviour
     public void OnSerchPlayer()
     {
         Debug.Log("OnLostPlayer():プレイヤーを見失った");
-        ChangeDoorBool(false);
+        GameObject.Find("AudioManager").GetComponent<AudioManager>().PlayDefault(this.GetInstanceID());
+
+        //m_OnLostPlayer?.Invoke();
         m_ef.ActiveQuestionMark();
         UpdateCannonState(CanonStatus.NonActive);
         m_eStatus = EnemyStatus.Search;
@@ -137,10 +150,10 @@ public class EnemyController : MonoBehaviour
         }
     }
 
-    void ChangeDoorBool(bool doorBool)
+
+    void ChangeGameManagerBool(bool GMbool)
     {
-        Debug.Log($"{this.gameObject.name}::ドアのステータスを変更::{doorBool}");
-        this.m_adc.ToList().ForEach(door => door.m_isLocked = doorBool);
+        m_gm.m_PlayerIsFound = GMbool;
     }
 
     private void Update()
@@ -168,23 +181,15 @@ public class EnemyController : MonoBehaviour
                         }
                     }
                     break;
-                /*プレイヤーを見つけたときのステータス。インスペクターでm_stayWhenFoundPlayerがtrueにされているとこちらになる。
-                 　その場で立ち止まり、プレイヤーの方を向き続ける*/
-                case EnemyStatus.Stay:
-                    {
-                        m_elc.ChangeLightColorWhenFound();
-                        this.transform.LookAt(m_player.transform.position);
-                        m_agent.SetDestination(this.transform.position);
-                    }
-                    break;
-                /*プレイヤーを見つけたときのステータス。インスペクターでm_stayWhenFoundPlayerがfalseにされているとこちらになる
-                  プレイヤーの方を向きながら、プレイヤーを追いかける。*/
+                /*プレイヤーを見つけたときのステータス。プレイヤーの方を向きながら、プレイヤーを追いかける。*/
                 case EnemyStatus.FoundPlayer:
                     {
-                        //m_audio.PlaySound("EnemyFound");
-
                         m_elc.ChangeLightColorWhenFound();
                         this.transform.LookAt(m_player.transform.position);
+                        if (m_stayWhenFoundPlayer)
+                        {
+                            m_agent.SetDestination(this.transform.position);
+                        }
                         m_agent.SetDestination(m_player.transform.position);
                         if (!m_agent.pathPending && m_agent.remainingDistance <= m_keepDistance)
                         {
@@ -239,6 +244,5 @@ enum EnemyStatus
 {
     Patrol = 1,
     FoundPlayer = 2,
-    Stay = 3,
-    Search = 4,
+    Search = 3,
 }

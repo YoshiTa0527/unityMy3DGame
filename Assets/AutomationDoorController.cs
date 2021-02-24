@@ -6,11 +6,35 @@ using System.Linq;
 public class AutomationDoorController : MonoBehaviour
 {
     DoorController[] m_door;
-    [SerializeField] DoorStatus m_doorStatus;
+
+    [SerializeField] Light m_doorLight;
+    [SerializeField] Color m_changeColor;
+    Color m_doorLightDefaultColor;
     public bool m_isLocked { get; set; }
+
+    GameManager m_gm;
     private void Start()
     {
         m_door = GetComponentsInChildren<DoorController>();
+        m_gm = FindObjectOfType<GameManager>();
+        m_doorLightDefaultColor = m_doorLight.color;
+    }
+
+    void ChangeDoorLight()
+    {
+        m_doorLight.color = m_changeColor;
+    }
+
+    private void FixedUpdate()
+    {
+        if (m_gm.m_PlayerIsFound)
+        {
+            ChangeDoorLight();
+        }
+        else
+        {
+            m_doorLight.color = m_doorLightDefaultColor;
+        }
     }
 
     private void OnTriggerEnter(Collider other)
@@ -18,21 +42,9 @@ public class AutomationDoorController : MonoBehaviour
         if (other.tag == "Player")
         {
             Debug.Log("接触Enter");
-
-            switch (m_doorStatus)
+            if (!m_gm.m_PlayerIsFound)
             {
-                case DoorStatus.StartDoor:
-                    m_door.ToList().ForEach(d => d.OpenDoor());
-                    break;
-                case DoorStatus.GoalDoor:
-                    if (!m_isLocked)
-                    {
-                        m_door.ToList().ForEach(d => d.OpenDoor());
-                    }
-                    break;
-                default:
-                    m_door.ToList().ForEach(d => d.OpenDoor());
-                    break;
+                m_door.ToList().ForEach(d => d.OpenDoor());
             }
         }
     }
@@ -42,30 +54,8 @@ public class AutomationDoorController : MonoBehaviour
         if (other.tag == "Player")
         {
             Debug.Log("接触Exit");
-
-            switch (m_doorStatus)
-            {
-                case DoorStatus.StartDoor:
-                    m_door.ToList().ForEach(d => d.CloseDoor());
-                    break;
-                case DoorStatus.GoalDoor:
-                    if (!m_isLocked)
-                    {
-                        m_door.ToList().ForEach(d => d.CloseDoor());
-                    }
-                    break;
-                default:
-                    m_door.ToList().ForEach(d => d.CloseDoor());
-                    break;
-            }
-
+            m_door.ToList().ForEach(d => d.CloseDoor());
         }
     }
 }
 
-
-enum DoorStatus
-{
-    StartDoor = 1,
-    GoalDoor = 2,
-}

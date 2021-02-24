@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 5661367190405747276}
   - component: {fileID: 3892846873024090032}
   m_Layer: 0
-  m_Name: GameObject
+  m_Name: DoorLight
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -25,10 +25,10 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1565024204455807914}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0, y: 3.78, z: 0.15}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalPosition: {x: 0, y: 3.78, z: 0.075}
+  m_LocalScale: {x: 0.2, y: 1, z: 0.5}
   m_Children: []
-  m_Father: {fileID: 1628353023803458146}
+  m_Father: {fileID: 1628353023362284788}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!108 &3892846873024090032
@@ -123,10 +123,11 @@ Transform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 5, y: 1, z: 2}
   m_Children:
+  - {fileID: 5661367190405747276}
   - {fileID: 1628353024128618613}
   - {fileID: 1628353024401925675}
   m_Father: {fileID: 1628353023803458146}
-  m_RootOrder: 1
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!33 &1628353023362284784
 MeshFilter:
@@ -201,6 +202,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_doorStatus: 0
+  m_doorLight: {fileID: 3892846873024090032}
+  m_changeColor: {r: 0.9339623, g: 0.09251513, b: 0.09251513, a: 0}
 --- !u!1 &1628353023803458147
 GameObject:
   m_ObjectHideFlags: 0
@@ -228,7 +231,6 @@ Transform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
-  - {fileID: 5661367190405747276}
   - {fileID: 1628353023362284788}
   m_Father: {fileID: 0}
   m_RootOrder: 0
@@ -360,7 +362,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 421664, guid: 088b5f04d52a542ec975e88d7d9934f5, type: 3}
       propertyPath: m_RootOrder
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 421664, guid: 088b5f04d52a542ec975e88d7d9934f5, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -493,7 +495,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 421664, guid: 088b5f04d52a542ec975e88d7d9934f5, type: 3}
       propertyPath: m_RootOrder
-      value: 1
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 421664, guid: 088b5f04d52a542ec975e88d7d9934f5, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x

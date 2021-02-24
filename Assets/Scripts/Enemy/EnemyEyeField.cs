@@ -93,10 +93,10 @@ public class EnemyEyeField : MonoBehaviour
             //敵のまっすぐ前とプレイヤーの位置の角度を計算する
             float angle = Vector3.Angle(this.transform.forward, (this.m_ec.m_player.transform.position - this.transform.position));
             //Debug.Log($"EyeField：プレイヤーとの角度：{angle}");
-            /*見たときに、プレイヤーとの角度が設定された範囲内でプレイヤーとの間に障害物がなかったら、あるいはプレイヤーが一定の距離内にいるならば*/
+            /*見たときに、発見しておらず、プレイヤーとの角度が設定された範囲内でプレイヤーとの間に障害物がなかったら、あるいはプレイヤーが一定の距離内にいるならば*/
             if (!m_ec.CheckObstacle(m_obstacle))
             {
-                if (angle <= m_eyeFieldAngle || CheckDistance())
+                if ((angle <= m_eyeFieldAngle || CheckDistance()) && m_ec.GetEnemyStatus() == 1)
                 {
                     /*プレイヤーを発見する*/
                     m_ec.OnFoundPlayer();
@@ -104,7 +104,7 @@ public class EnemyEyeField : MonoBehaviour
             }
             else
             {
-                if ((angle <= m_eyeFieldAngle || CheckDistance()) && (m_ec.GetEnemyStatus() == 2 || m_ec.GetEnemyStatus() == 3))
+                if ((angle <= m_eyeFieldAngle || CheckDistance()) && m_ec.GetEnemyStatus() == 2)
                 {
                     /*found中だったら*/
                     m_ec.OnSerchPlayer();

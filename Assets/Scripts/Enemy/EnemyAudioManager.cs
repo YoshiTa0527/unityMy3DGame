@@ -7,7 +7,7 @@ public class EnemyAudioManager : MonoBehaviour
 {
     [SerializeField] AudioClip[] m_audioClips;
     AudioSource m_audioSource;
-
+    
     private void Start()
     {
         m_audioSource = GetComponent<AudioSource>();
