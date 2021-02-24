@@ -7,6 +7,7 @@ using UniRx;
 /// <summary>
 /// AudioSourceを持っているオブジェクトにつける。
 /// プレイヤーの状態によって流す音楽を変える
+/// 後々イベントを使って改良する。
 /// </summary>
 public class AudioManager : MonoBehaviour
 {
@@ -18,101 +19,83 @@ public class AudioManager : MonoBehaviour
     [SerializeField] float fadeTime;
     AudioSource m_audioSource;
     AudioController m_ac;
-    GameManager m_gm;
-    int m_musicIndex;
-    PlayerControllerAI m_pcai;
     List<int> m_idList = new List<int>();
     bool m_isChasing = false;
 
     private void Start()
     {
-        m_pcai = FindObjectOfType<PlayerControllerAI>();
         m_ac = GetComponent<AudioController>();
-        m_gm = FindObjectOfType<GameManager>();
         m_audioSource = GetComponent<AudioSource>();
-        m_musicIndex = 0;
+        m_audioSource.volume = 0;
+        m_ac.Fade(m_audioSource, m_audioVolume, fadeTime);
+        m_audioSource.Play();
 
     }
 
-    /// <summary>
-    /// BGMを再生する。引数が0の時はデフォルトのBGM。1の時は敵に見つかったときのBGM
-    /// </summary>
-    /// <param name="i"></param>
-    //public void PlayBGM(int i)
-    //{
-    //    if (m_audioSource == null || m_audioClips == null || m_audioClips.Length == 0)
-    //    {
-    //        return;
-    //    }
-
-    //    if (0 <= i && i < m_audioClips.Length)
-    //    {
-    //        if (m_audioClips[i] != null)
-    //        {
-    //            m_audioSource.clip = m_audioClips[i];
-    //            m_audioSource.Play();
-    //            m_musicIndex = i;
-    //        }
-    //    }
-
-    //}
 
     public void PlayDefault(int id)
     {
         m_idList.Remove(id);
         if (m_idList.Count() < 1)
         {
+
             m_audioSource.Stop();
+
             m_audioSource.clip = m_defaultBgm;
+
             m_audioSource.Play();
+
             m_isChasing = false;
         }
     }
-    public void PlayFindBgm(int id)
+    public void PlayFind(int id)
     {
         m_idList.Add(id);
         if (m_idList.Count == 1)
         {
+
             m_audioSource.Stop();
             m_audioSource.clip = m_findBgm;
+
             m_audioSource.Play();
             m_isChasing = true;
         }
 
     }
-    //public void StopBGM()
-    //{
-    //    if (m_audioSource == null || m_audioClips == null || m_audioClips.Length == 0)
-    //    {
-    //        return;
-    //    }
 
-    //    if (m_audioSource.isPlaying)
-    //    {
-    //        m_audioSource.Stop();
-    //    }
-    //}
+    public IEnumerator PlayDefaultBgm(int id)
+    {
+        m_idList.Remove(id);
+        if (m_idList.Count() < 1)
+        {
+            m_ac.Fade(m_audioSource, 0, fadeTime);
+            yield return new WaitForSeconds(fadeTime);
+            m_audioSource.Stop();
 
-    //public void Next()
-    //{
-    //    m_musicIndex = (int)Mathf.Repeat(++m_musicIndex, m_audioClips.Length);
-    //    if (m_audioSource != null && m_audioSource.isPlaying)
-    //        PlayBGM(m_musicIndex);
-    //}
+            m_audioSource.clip = m_defaultBgm;
 
-    //public void Prev()
-    //{
-    //    m_musicIndex = (int)Mathf.Repeat(--m_musicIndex, m_audioClips.Length);
-    //    if (m_audioSource != null && m_audioSource.isPlaying)
-    //        PlayBGM(m_musicIndex);
-    //}
+            m_audioSource.Play();
+            m_ac.Fade(m_audioSource, m_audioVolume, fadeTime);
+            m_isChasing = false;
+        }
+    }
 
-    //public void PlayBGM()
-    //{
-    //    PlayBGM(m_musicIndex);
-    //}
+    public IEnumerator PlayFindBgm(int id)
+    {
+        m_idList.Remove(id);
+        if (m_idList.Count() < 1)
+        {
+            m_ac.Fade(m_audioSource, 0, fadeTime);
+            yield return new WaitForSeconds(fadeTime);
+            m_audioSource.Stop();
 
+            m_audioSource.clip = m_findBgm;
 
+            m_audioSource.Play();
+            m_ac.Fade(m_audioSource, m_audioVolume, fadeTime);
+            m_isChasing = true;
+        }
+    }
 
 
 }

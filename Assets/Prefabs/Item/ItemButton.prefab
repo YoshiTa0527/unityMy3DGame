@@ -375,7 +375,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 1883153030}
-        m_MethodName: UseItem
+        m_MethodName: SetItemToUseSlot
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -419,6 +419,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_audio: {fileID: 8300000, guid: 865eb04144f1eea4591b552f9d350d57, type: 3}
   m_itemInfoPanel: {fileID: 1089051783569824155}
+  m_itemPanelToSet: {fileID: 0}
 --- !u!1 &9068969561447670024
 GameObject:
   m_ObjectHideFlags: 0

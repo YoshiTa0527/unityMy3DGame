@@ -6,6 +6,7 @@ using UnityEngine.UI;
 
 /// <summary>
 /// 取得したアイテムをアイテムスロットに表示するスクリプト
+/// 未完成。所持数上限を設け、一定数以上のアイテムを入手できないようにする
 /// </summary>
 public class ItemSlotManager : MonoBehaviour
 {

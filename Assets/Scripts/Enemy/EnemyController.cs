@@ -42,6 +42,7 @@ public class EnemyController : MonoBehaviour
     EnemyEyeField m_eef;
     AutomationDoorController[] m_adc;
     GameManager m_gm;
+    AudioManager m_audioManager;
 
 
     /// <summary>
@@ -63,6 +64,7 @@ public class EnemyController : MonoBehaviour
 
     private void Start()
     {
+        m_audioManager = GameObject.Find("AudioManager").GetComponent<AudioManager>();
 
         m_audio = GetComponentInChildren<EnemyAudioManager>();
         m_elc = GetComponentInChildren<EnemyLightController>();
@@ -122,7 +124,7 @@ public class EnemyController : MonoBehaviour
     public void OnFoundPlayer()
     {
         Debug.Log("OnFoundPlayerByEye:プレイヤーを見つけた");
-        GameObject.Find("AudioManager").GetComponent<AudioManager>().PlayFindBgm(this.GetInstanceID());
+        m_audioManager.PlayFind(this.GetInstanceID());
         //m_OnFindPlayer?.Invoke();
         m_ef.ActiveExclamationMark();
         UpdateCannonState(CanonStatus.Active);
@@ -134,8 +136,7 @@ public class EnemyController : MonoBehaviour
     public void OnSerchPlayer()
     {
         Debug.Log("OnLostPlayer():プレイヤーを見失った");
-        GameObject.Find("AudioManager").GetComponent<AudioManager>().PlayDefault(this.GetInstanceID());
-
+        m_audioManager.PlayDefault(this.GetInstanceID());
         //m_OnLostPlayer?.Invoke();
         m_ef.ActiveQuestionMark();
         UpdateCannonState(CanonStatus.NonActive);

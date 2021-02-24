@@ -4,7 +4,10 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
 using System.Linq;
-
+/// <summary>
+/// アイテムのインベントリにクローンされるボタンのスクリプト
+/// 未完成。アイテムインベントリにあるアイテムを、キーボード操作で選択、使用できるようにする
+/// </summary>
 public class ItemButtonController : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 {
 
@@ -18,6 +21,9 @@ public class ItemButtonController : MonoBehaviour, IPointerEnterHandler, IPointe
     [SerializeField] GameObject m_itemInfoPanel;
     Animator m_itemInfoAnim;
     bool m_infoIsActive;
+    /// <summary>アイテムをセットする場所</summary>
+    GameObject m_itemPanelToSet;
+
 
     ItemSlotManager m_ism;
     private void OnMouseDown()
@@ -47,6 +53,8 @@ public class ItemButtonController : MonoBehaviour, IPointerEnterHandler, IPointe
 
     private void Start()
     {
+        m_itemPanelToSet = GameObject.Find("UseItemPanel");
+
         m_ism = FindObjectOfType<ItemSlotManager>();
         m_itemCountText = this.transform.Find("ItemCountText").GetComponent<Text>();
         m_itemNameText = this.transform.Find("ItemNameText").GetComponent<Text>();
@@ -87,6 +95,16 @@ public class ItemButtonController : MonoBehaviour, IPointerEnterHandler, IPointe
         {
             m_ism.GetItemBaseList().Where(item => item.GetItemName() == this.m_itemNameText.text).First().Use();
         }
+    }
+
+    public void SetItemToUseSlot()
+    {
+        /*イメージ*/
+        m_itemPanelToSet.transform.Find("ItemImage").GetComponent<Image>().sprite = this.gameObject.GetComponent<Image>().sprite;
+        /*名前*/
+        m_itemPanelToSet.transform.Find("ItemNameText").GetComponent<Text>().text = this.m_itemNameText.text;
+        /*個数*/
+        m_itemPanelToSet.transform.Find("ItemCountText").GetComponent<Text>().text = this.m_itemCountText.text;
     }
 
     /// <summary>

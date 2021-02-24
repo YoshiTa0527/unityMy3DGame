@@ -35,7 +35,7 @@ public class AudioController : MonoBehaviour
     /// <param name="audioSource"></param>
     /// <param name="time"></param>
     /// <param name="targetVolume"></param>
-    public void Fade(AudioSource audioSource, float time, float targetVolume)
+    public void Fade(AudioSource audioSource, float targetVolume, float time)
     {
         audioSource.DOFade(targetVolume, time);
     }
