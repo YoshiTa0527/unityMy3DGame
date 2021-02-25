@@ -29,6 +29,7 @@ public class ItemSlotManager : MonoBehaviour
 
     Animator m_anim;
 
+    UseItemPanelController m_uipc;
 
 
     public List<ItemBase> GetItemBaseList()
@@ -81,7 +82,7 @@ public class ItemSlotManager : MonoBehaviour
         }
         else { Debug.LogError("何も持っていません！"); return false; }
     }
-
+    GameObject m_itemButton;
     /// <summary>
     /// パネルを生成する
     /// </summary>
@@ -91,10 +92,10 @@ public class ItemSlotManager : MonoBehaviour
         Debug.Log("CreateItemPanel::アイテムを作ります");
         if (!CheckAlreadyExist(m_newItem))
         {
-            GameObject itemButton = Instantiate(m_itemButtonPanelPrefab, m_AllItemPanel.transform);
-            itemButton.transform.Find("ItemNameText").GetComponent<Text>().text = m_itemBase.Last().GetItemName();
-            itemButton.GetComponent<Image>().sprite = m_itemBase.Last().GetItemSprite();
-            if (!itemButton.GetComponent<Image>().sprite) itemButton.GetComponent<Image>().sprite = m_alterImage;
+            m_itemButton = Instantiate(m_itemButtonPanelPrefab, m_AllItemPanel.transform);
+            m_itemButton.transform.Find("ItemNameText").GetComponent<Text>().text = m_itemBase.Last().GetItemName();
+            m_itemButton.GetComponent<Image>().sprite = m_itemBase.Last().GetItemSprite();
+            if (!m_itemButton.GetComponent<Image>().sprite) m_itemButton.GetComponent<Image>().sprite = m_alterImage;
         }
 
     }
@@ -134,6 +135,7 @@ public class ItemSlotManager : MonoBehaviour
     bool m_inventoryIsActive;
     private void Start()
     {
+        m_uipc = FindObjectOfType<UseItemPanelController>();
         m_anim = m_AllItemPanel.GetComponent<Animator>();
         m_inventoryIsActive = false;
         m_anim.SetBool("IsActive", m_inventoryIsActive);
@@ -144,15 +146,18 @@ public class ItemSlotManager : MonoBehaviour
 
     private void Update()
     {
+        //m_uipc.ItemSelecter(m_itemBase);
         if (Input.GetButtonDown("Fire1"))
         {
-            CheckElements();
+            //CheckElements();
+            //m_uipc.ItemSelecter(m_itemBase);
         }
 
         if (!m_inventoryIsActive && Input.GetButtonDown("OpenInventory"))
         {
             m_inventoryIsActive = true;
             m_anim.SetBool("IsActive", m_inventoryIsActive);
+            m_itemButton.GetComponent<ItemButtonController>().SelectDefaultItem();
             Debug.Log($"メニューを開きます");
         }
         else if (m_inventoryIsActive && Input.GetButtonDown("OpenInventory"))

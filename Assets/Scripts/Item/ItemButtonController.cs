@@ -22,7 +22,8 @@ public class ItemButtonController : MonoBehaviour, IPointerEnterHandler, IPointe
     Animator m_itemInfoAnim;
     bool m_infoIsActive;
     /// <summary>アイテムをセットする場所</summary>
-    GameObject m_itemPanelToSet;
+    //GameObject m_itemPanelToSet;
+    UseItemPanelController m_uipc;
 
 
     ItemSlotManager m_ism;
@@ -50,10 +51,20 @@ public class ItemButtonController : MonoBehaviour, IPointerEnterHandler, IPointe
         m_itemInfoAnim.SetBool("IsActive", m_infoIsActive);
     }
 
+    public void SelectDefaultItem()
+    {
+        EventSystem.current.SetSelectedGameObject(this.gameObject);
+        //if (this.m_itemNameText.text == "空きスロット")
+        //{
+        //    m_itemCountText.text = "";
+           
+        //}
+    }
 
     private void Start()
     {
-        m_itemPanelToSet = GameObject.Find("UseItemPanel");
+       // m_itemPanelToSet = GameObject.Find("UseItemPanel");
+       // m_uipc = m_itemPanelToSet.GetComponent<UseItemPanelController>();
 
         m_ism = FindObjectOfType<ItemSlotManager>();
         m_itemCountText = this.transform.Find("ItemCountText").GetComponent<Text>();
@@ -65,11 +76,7 @@ public class ItemButtonController : MonoBehaviour, IPointerEnterHandler, IPointe
         m_itemInformationText = m_itemInfoPanel.transform.Find("ItemInfo").GetComponent<Text>();
         m_itemInformationText.text = m_ism.GetItemBaseList().Where(item => item.GetItemName() == this.m_itemNameText.text).First().GetItemInforMation();
 
-        if (this.m_itemNameText.text == "空きスロット")
-        {
-            m_itemCountText.text = "";
-            EventSystem.current.SetSelectedGameObject(this.gameObject);
-        }
+
     }
 
     private void Update()
@@ -99,12 +106,14 @@ public class ItemButtonController : MonoBehaviour, IPointerEnterHandler, IPointe
 
     public void SetItemToUseSlot()
     {
-        /*イメージ*/
-        m_itemPanelToSet.transform.Find("ItemImage").GetComponent<Image>().sprite = this.gameObject.GetComponent<Image>().sprite;
-        /*名前*/
-        m_itemPanelToSet.transform.Find("ItemNameText").GetComponent<Text>().text = this.m_itemNameText.text;
-        /*個数*/
-        m_itemPanelToSet.transform.Find("ItemCountText").GetComponent<Text>().text = this.m_itemCountText.text;
+        ///*イメージ*/
+        //m_itemPanelToSet.transform.Find("ItemImage").GetComponent<Image>().sprite = this.gameObject.GetComponent<Image>().sprite;
+        ///*名前*/
+        //m_itemPanelToSet.transform.Find("ItemNameText").GetComponent<Text>().text = this.m_itemNameText.text;
+        ///*個数*/
+        //m_itemPanelToSet.transform.Find("ItemCountText").GetComponent<Text>().text = this.m_itemCountText.text;
+
+       // m_uipc.SetDate(this.m_itemNameText, this.m_itemCountText, this.gameObject.GetComponent<Image>());
     }
 
     /// <summary>
