@@ -8,6 +8,8 @@ TagManager:
   - Canonn
   - Marker
   - Enemy
+  - CanvasHUD
+  - AudioManager
   layers:
   - Default
   - TransparentFX

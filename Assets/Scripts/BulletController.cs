@@ -6,14 +6,13 @@ public class BulletController : MonoBehaviour
 {
     [SerializeField] float m_bulletSpeed = 5f;
     [SerializeField] float m_playerHeadLine = 0.2f;
-    HumanoidController m_hc;
+    PlayerControllerAI m_pcai;
     Rigidbody m_rb;
 
 
     private void Start()
     {
         m_rb = GetComponent<Rigidbody>();
-        m_hc = FindObjectOfType<HumanoidController>();
         GameObject player = GameObject.FindGameObjectWithTag("Player");
         /*キャラクターの座標の少し上を狙う*/
         Vector3 shotDir = new Vector3((player.transform.position - this.transform.position).x,

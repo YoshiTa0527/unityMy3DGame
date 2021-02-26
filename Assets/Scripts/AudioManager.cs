@@ -15,6 +15,7 @@ public class AudioManager : MonoBehaviour
     //[SerializeField] AudioClip[] m_audioClips;
     [SerializeField] AudioClip m_findBgm;
     [SerializeField] AudioClip m_defaultBgm;
+    [SerializeField] AudioClip m_resultBgm;
     [SerializeField, Range(0, 1)] float m_audioVolume;
     [SerializeField] float fadeTime;
     AudioSource m_audioSource;
@@ -63,40 +64,12 @@ public class AudioManager : MonoBehaviour
 
     }
 
-    public IEnumerator PlayDefaultBgm(int id)
+    public void PlayResult()
     {
-        m_idList.Remove(id);
-        if (m_idList.Count() < 1)
-        {
-            m_ac.Fade(m_audioSource, 0, fadeTime);
-            yield return new WaitForSeconds(fadeTime);
-            m_audioSource.Stop();
-
-            m_audioSource.clip = m_defaultBgm;
-
-            m_audioSource.Play();
-            m_ac.Fade(m_audioSource, m_audioVolume, fadeTime);
-            m_isChasing = false;
-        }
+        m_audioSource.Stop();
+        m_audioSource.clip = m_resultBgm;
+        m_audioSource.Play();
     }
-
-    public IEnumerator PlayFindBgm(int id)
-    {
-        m_idList.Remove(id);
-        if (m_idList.Count() < 1)
-        {
-            m_ac.Fade(m_audioSource, 0, fadeTime);
-            yield return new WaitForSeconds(fadeTime);
-            m_audioSource.Stop();
-
-            m_audioSource.clip = m_findBgm;
-
-            m_audioSource.Play();
-            m_ac.Fade(m_audioSource, m_audioVolume, fadeTime);
-            m_isChasing = true;
-        }
-    }
-
 
 }
 

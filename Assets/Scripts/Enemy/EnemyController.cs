@@ -4,6 +4,7 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.Events;
+using DG.Tweening;
 
 /// <summary>
 /// 敵。enemyEyeFieledにプレイヤーが侵入するか、一定距離まで近づくとプレイヤーを発見し、Canonを起動させる。
@@ -17,7 +18,12 @@ public class EnemyController : MonoBehaviour
     /// <summary> プレイヤーの方向  </summary>
     Vector3 m_playerDir;
     /// <summary>巡回させるために必要なtransform</summary>
-    [SerializeField] Transform[] m_routeObjects = null;
+    [SerializeField] GameObject[] m_routeObjects = null;
+    [SerializeField] GameObject m_routeObjectParent;
+    [SerializeField] bool m_isOrderBy = true;
+    /// <summary>巡回しない場合、この地点を順番に見る</summary>
+    [SerializeField] GameObject m_lookAtPosParent;
+    GameObject[] m_lookAtPosChirdlen;
     /// <summary>インデックス番号</summary>
     int m_routeIndex = 0;
     /// <summary>プレイヤーを見つけた際にstayするか追いかけるか</summary>
@@ -64,6 +70,39 @@ public class EnemyController : MonoBehaviour
 
     private void Start()
     {
+        /*ルートが設定されているなら、自動で設定する*/
+        if (m_routeObjectParent != null)
+        {
+            GameObject[] routeObjectChirdren = new GameObject[m_routeObjectParent.transform.childCount];
+            for (int i = 0; i < m_routeObjectParent.transform.childCount; i++)
+            {
+                routeObjectChirdren[i] = m_routeObjectParent.transform.GetChild(i).gameObject;
+            }
+
+            if (m_isOrderBy)
+            {
+                m_routeObjects = routeObjectChirdren.OrderBy(route => route.gameObject.name).ToArray();
+            }
+            else
+            {
+                m_routeObjects = routeObjectChirdren.OrderByDescending(route => route.gameObject.name).ToArray();
+            }
+
+            this.transform.position = m_routeObjects[0].transform.position;
+        }
+
+        if (m_lookAtPosParent)
+        {
+            m_yearDistance = 0.1f;
+            m_lookAtPosChirdlen = new GameObject[m_lookAtPosParent.transform.childCount];
+            for (int i = 0; i < m_lookAtPosParent.transform.childCount; i++)
+            {
+                m_lookAtPosChirdlen[i] = m_lookAtPosParent.transform.GetChild(i).gameObject;
+            }
+            m_lookAtPosChirdlen.ToList().ForEach(pos => Debug.Log(pos.gameObject.name));
+            RotateEnemy();
+        }
+
         m_audioManager = GameObject.Find("AudioManager").GetComponent<AudioManager>();
 
         m_audio = GetComponentInChildren<EnemyAudioManager>();
@@ -82,9 +121,11 @@ public class EnemyController : MonoBehaviour
 
         m_ef = GetComponentInChildren<EnemyEffects>();
         m_eef = GetComponentInChildren<EnemyEyeField>();
-        this.transform.position = m_routeObjects[0].position;
+        BuildSequence();
+
         GoToNextPoint();
     }
+
 
     /// <summary>
     /// 敵の移動ルートを設定する
@@ -99,7 +140,7 @@ public class EnemyController : MonoBehaviour
             return;
         }
         /*agentに目的地を設定*/
-        m_agent.SetDestination(m_routeObjects[m_routeIndex].position);
+        m_agent.SetDestination(m_routeObjects[m_routeIndex].transform.position);
         /*配列内の次の位置を目的地に設定する。配列を超えると出発地点に戻る*/
         m_routeIndex = (m_routeIndex + 1) % m_routeObjects.Length;
     }
@@ -126,6 +167,7 @@ public class EnemyController : MonoBehaviour
         Debug.Log("OnFoundPlayerByEye:プレイヤーを見つけた");
         m_audioManager.PlayFind(this.GetInstanceID());
         //m_OnFindPlayer?.Invoke();
+
         m_ef.ActiveExclamationMark();
         UpdateCannonState(CanonStatus.Active);
         m_eStatus = EnemyStatus.FoundPlayer;
@@ -138,6 +180,7 @@ public class EnemyController : MonoBehaviour
         Debug.Log("OnLostPlayer():プレイヤーを見失った");
         m_audioManager.PlayDefault(this.GetInstanceID());
         //m_OnLostPlayer?.Invoke();
+        m_gm.m_PlayerIsFound = false;
         m_ef.ActiveQuestionMark();
         UpdateCannonState(CanonStatus.NonActive);
         m_eStatus = EnemyStatus.Search;
@@ -157,11 +200,19 @@ public class EnemyController : MonoBehaviour
         m_gm.m_PlayerIsFound = GMbool;
     }
 
+    Sequence m_seq;
+
+    void BuildSequence()
+    {
+        m_seq = DOTween.Sequence();
+        m_seq.Append(this.transform.DORotate(new Vector3(0, 180, 0), 15)).SetRelative().Rewind();
+    }
+
+    float m_rotateTimer = 0;
     private void Update()
     {
         if (m_player)/*プレイヤーがいるなら行動する*/
         {
-
             m_playerDir = m_player.transform.position - this.transform.position;
             m_playerDir.y = 0;
 
@@ -171,27 +222,48 @@ public class EnemyController : MonoBehaviour
                 case EnemyStatus.Patrol:
                     {
                         m_eef.OpenSearchArea();
-                        //Debug.Log($"巡回中。目的地までの距離：{m_agent.remainingDistance}");
-                        if (!m_agent.pathPending && m_agent.remainingDistance < 0.5f)
+                        /*目的地が設定されていなかったら、90度ずつ回転する*/
+                        if (m_routeObjects.Length == 0)
                         {
-                            GoToNextPoint();
+                            Debug.Log($"{this.gameObject.name}目的地が設定されていない");
+                            m_rotateTimer += Time.deltaTime;
+                            if (m_rotateTimer >= 5f)
+                            {
+                                m_rotateTimer = 0;
+                                RotateEnemy();
+
+                            }
+
                         }
                         else
                         {
-                            Debug.Log($"agent.pathPending ：{m_agent.pathPending }");
+                            //Debug.Log($"巡回中。目的地までの距離：{m_agent.remainingDistance}");
+                            if (!m_agent.pathPending && m_agent.remainingDistance < 1f)
+                            {
+                                GoToNextPoint();
+                            }
+                            else
+                            {
+                                Debug.Log($"agent.pathPending ：{m_agent.pathPending }");
+                            }
                         }
                     }
                     break;
                 /*プレイヤーを見つけたときのステータス。プレイヤーの方を向きながら、プレイヤーを追いかける。*/
                 case EnemyStatus.FoundPlayer:
                     {
+                        m_gm.m_PlayerIsFound = true;
                         m_elc.ChangeLightColorWhenFound();
                         this.transform.LookAt(m_player.transform.position);
                         if (m_stayWhenFoundPlayer)
                         {
                             m_agent.SetDestination(this.transform.position);
                         }
-                        m_agent.SetDestination(m_player.transform.position);
+                        else
+                        {
+                            m_agent.SetDestination(m_player.transform.position);
+                        }
+
                         if (!m_agent.pathPending && m_agent.remainingDistance <= m_keepDistance)
                         {
                             Debug.Log($" EnemyStatus.FoundPlayer：近づきすぎ！プレイヤーとの距離：{m_agent.remainingDistance}　設定された間隔：{m_keepDistance}");
@@ -237,6 +309,27 @@ public class EnemyController : MonoBehaviour
         m_elc.ResetLightColor();
         yield return new WaitForSeconds(2f);
         m_eStatus = EnemyStatus.Patrol;
+    }
+
+
+    int m_lookAtIndex;
+
+    /// <summary>
+    /// 敵を回転させる
+    /// </summary>
+    /// <returns></returns>
+    void RotateEnemy()
+    {
+        Debug.Log($"RotateEnemy");
+
+        /*設定*/
+        this.transform.LookAt(m_lookAtPosChirdlen[m_lookAtIndex].transform.position);
+
+        /*配列内の次の位置を設定する。配列を超えると出発地点に戻る*/
+        m_lookAtIndex = (m_lookAtIndex + 1) % m_lookAtPosChirdlen.Length;
+
+
+
     }
 
 }

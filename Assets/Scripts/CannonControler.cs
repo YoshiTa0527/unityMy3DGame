@@ -18,22 +18,23 @@ public class CannonControler : MonoBehaviour
     /// <summary>砲台が飛び出るときのアニメーター</summary>
     Animator m_anim;
     /// <summary>プレイヤー</summary>
-    HumanoidController m_hc;
+    
+    PlayerControllerAI m_pcai;
 
     private void Start()
     {
 
         m_anim = GetComponent<Animator>();
         m_ec = FindObjectOfType<EnemyController>();
-        m_hc = FindObjectOfType<HumanoidController>();
+       
+        m_pcai = FindObjectOfType<PlayerControllerAI>();
         m_status = CanonStatus.NonActive;
 
     }
 
     private void Update()
     {
-        playerPos = new Vector3(m_hc.transform.position.x, m_hc.transform.position.y + 0.5f, m_hc.transform.position.z);
-
+        
         switch (m_status)
         {
             case CanonStatus.NonActive:
@@ -48,6 +49,7 @@ public class CannonControler : MonoBehaviour
                 break;
             case CanonStatus.Active:
                 {
+                    playerPos = m_pcai.transform.position;
                     m_anim.Play("ActiveCanon");
                     m_muzzlePrefab.Play("MuzzleActive");
                     this.gameObject.transform.LookAt(playerPos);
