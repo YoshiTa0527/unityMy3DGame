@@ -6084,7 +6084,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh-52072
+  m_Name: pb_Mesh-179364
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -7609,6 +7609,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Enemy (1)
+      objectReference: {fileID: 0}
+    - target: {fileID: 8847720296051794380, guid: 04ccd827435b42e4b9021f42f12cfe9a,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 04ccd827435b42e4b9021f42f12cfe9a, type: 3}
@@ -11601,7 +11606,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh-52070
+  m_Name: pb_Mesh-179362
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -12455,7 +12460,7 @@ RectTransform:
   m_LocalScale: {x: 0, y: 0, z: 0}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 26
+  m_RootOrder: 27
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
@@ -16430,6 +16435,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: Enemy
       objectReference: {fileID: 0}
+    - target: {fileID: 8847720296051794380, guid: 04ccd827435b42e4b9021f42f12cfe9a,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 04ccd827435b42e4b9021f42f12cfe9a, type: 3}
 --- !u!1001 &1303010512
@@ -16987,7 +16997,7 @@ Transform:
   - {fileID: 81394870}
   - {fileID: 144298052}
   m_Father: {fileID: 0}
-  m_RootOrder: 22
+  m_RootOrder: 23
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1371417046 stripped
 GameObject:
@@ -17972,6 +17982,12 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 1446990395}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &1455296105 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 3949566957891201694, guid: 32fd2329879706440adc59fcbac7e991,
+    type: 3}
+  m_PrefabInstance: {fileID: 3949566956426927278}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1461160645 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 2448264507210211403, guid: 0c724afa813e9e04f9edb6237f2c969a,
@@ -18519,7 +18535,7 @@ RectTransform:
   m_Children:
   - {fileID: 1634755202}
   m_Father: {fileID: 0}
-  m_RootOrder: 27
+  m_RootOrder: 25
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
@@ -19226,6 +19242,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_gameState: 0
   m_waitoToStartFadeIn: 1
+  m_hudCanvas: {fileID: 0}
 --- !u!4 &1585895680
 Transform:
   m_ObjectHideFlags: 0
@@ -19798,7 +19815,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1625224889}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
@@ -19807,7 +19824,7 @@ Transform:
   - {fileID: 2133612611}
   - {fileID: 547151196}
   m_Father: {fileID: 0}
-  m_RootOrder: 23
+  m_RootOrder: 21
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1631328070
 GameObject:
@@ -20034,6 +20051,7 @@ MonoBehaviour:
   m_panelImage: {fileID: 1634755203}
   m_fadeInTime: 2.5
   m_fadeOutTime: 1
+  m_hudCanvas: {fileID: 1455296105}
 --- !u!1001 &1636648428
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -23373,7 +23391,7 @@ PrefabInstance:
     - target: {fileID: 8847720296051794376, guid: 04ccd827435b42e4b9021f42f12cfe9a,
         type: 3}
       propertyPath: m_RootOrder
-      value: 21
+      value: 22
       objectReference: {fileID: 0}
     - target: {fileID: 8847720296051794376, guid: 04ccd827435b42e4b9021f42f12cfe9a,
         type: 3}
@@ -26995,7 +27013,7 @@ PrefabInstance:
     - target: {fileID: 3949566957891201690, guid: 32fd2329879706440adc59fcbac7e991,
         type: 3}
       propertyPath: m_RootOrder
-      value: 25
+      value: 26
       objectReference: {fileID: 0}
     - target: {fileID: 3949566957891201690, guid: 32fd2329879706440adc59fcbac7e991,
         type: 3}
@@ -27066,6 +27084,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: HUDCanvas
+      objectReference: {fileID: 0}
+    - target: {fileID: 3949566957891201694, guid: 32fd2329879706440adc59fcbac7e991,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 32fd2329879706440adc59fcbac7e991, type: 3}

@@ -6,13 +6,14 @@ using System;
 
 public class GameManager : MonoBehaviour
 {
-    public static event Action OnFindPlayer;
-    public static event Action OnLostPlayer;
-
     [SerializeField] GameState m_gameState;
     [SerializeField] float m_waitoToStartFadeIn = 2f;
     FadeController m_fc;
     AudioManager m_am;
+    /// <summary>
+    /// フェードが終わった後に表示する
+    /// </summary>
+    [SerializeField] GameObject m_hudCanvas;
     public bool m_PlayerIsFound { get; set; }
     private void Start()
     {

@@ -45,6 +45,7 @@ public class EnemyController : MonoBehaviour
     EnemyLightController m_elc;
     EnemyAudioManager m_audio;
     public GameObject m_player;
+
     EnemyEyeField m_eef;
     AutomationDoorController[] m_adc;
     GameManager m_gm;

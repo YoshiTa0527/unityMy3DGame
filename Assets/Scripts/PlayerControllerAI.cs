@@ -76,11 +76,11 @@ public class PlayerControllerAI : MonoBehaviour
         //    m_gm.m_PlayerIsFound = true;
 
         //}
-        else
-        {
-            Debug.Log("敵に見つかっていない");
-            m_gm.m_PlayerIsFound = false;
-        }
+        //else
+        //{
+        //    Debug.Log("敵に見つかっていない");
+        //    m_gm.m_PlayerIsFound = false;
+        //}
 
         // m_target が移動したら Navmesh Agent を使って移動させる
         if (Vector3.Distance(m_cachedTargetPosition, m_target.position) > 0.1f) // m_target が 10cm 以上移動したら

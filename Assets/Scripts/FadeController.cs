@@ -14,6 +14,12 @@ public class FadeController : MonoBehaviour
     [SerializeField] float m_fadeOutTime = 1f;
 
     /// <summary>
+    /// フェードが終わった後に表示する
+    /// </summary>
+    [SerializeField] GameObject m_hudCanvas;
+
+
+    /// <summary>
     /// 真っ黒なイメージに徐々にアルファ値を引いていき透明にする
     /// </summary>
     /// <param name="m_waitTime">フェードインする待ち時間</param>
@@ -22,7 +28,8 @@ public class FadeController : MonoBehaviour
     {
         Sequence seq = DOTween.Sequence();
         seq.AppendInterval(m_waitTime).
-            Append(m_panelImage.DOFade(0, m_fadeInTime));
+            Append(m_panelImage.DOFade(0, m_fadeInTime)).
+           OnComplete(() => m_hudCanvas.SetActive(true));
         seq.Play();
     }
 
