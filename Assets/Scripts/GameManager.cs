@@ -14,13 +14,13 @@ public class GameManager : MonoBehaviour
     /// フェードが終わった後に表示する
     /// </summary>
     [SerializeField] GameObject m_hudCanvas;
-    public bool m_PlayerIsFound { get; set; }
+    public static bool PlayerIsFound { get; set; }
     private void Start()
     {
         m_fc = FindObjectOfType<FadeController>();
         m_am = FindObjectOfType<AudioManager>();
         if (m_fc) { Debug.Log($"GameManager::{m_fc.GetType().ToString()}"); }
-        m_PlayerIsFound = false;
+        PlayerIsFound = false;
         m_fc.FadeIn(m_waitoToStartFadeIn);
     }
 

@@ -166,9 +166,8 @@ public class EnemyController : MonoBehaviour
     public void OnFoundPlayer()
     {
         Debug.Log("OnFoundPlayerByEye:プレイヤーを見つけた");
+        GameManager.PlayerIsFound = true;
         m_audioManager.PlayFind(this.GetInstanceID());
-        //m_OnFindPlayer?.Invoke();
-
         m_ef.ActiveExclamationMark();
         UpdateCannonState(CanonStatus.Active);
         m_eStatus = EnemyStatus.FoundPlayer;
@@ -179,9 +178,8 @@ public class EnemyController : MonoBehaviour
     public void OnSerchPlayer()
     {
         Debug.Log("OnLostPlayer():プレイヤーを見失った");
+        GameManager.PlayerIsFound = false;
         m_audioManager.PlayDefault(this.GetInstanceID());
-        //m_OnLostPlayer?.Invoke();
-        m_gm.m_PlayerIsFound = false;
         m_ef.ActiveQuestionMark();
         UpdateCannonState(CanonStatus.NonActive);
         m_eStatus = EnemyStatus.Search;
@@ -196,10 +194,7 @@ public class EnemyController : MonoBehaviour
     }
 
 
-    void ChangeGameManagerBool(bool GMbool)
-    {
-        m_gm.m_PlayerIsFound = GMbool;
-    }
+
 
     Sequence m_seq;
 
@@ -253,7 +248,7 @@ public class EnemyController : MonoBehaviour
                 /*プレイヤーを見つけたときのステータス。プレイヤーの方を向きながら、プレイヤーを追いかける。*/
                 case EnemyStatus.FoundPlayer:
                     {
-                        m_gm.m_PlayerIsFound = true;
+
                         m_elc.ChangeLightColorWhenFound();
                         this.transform.LookAt(m_player.transform.position);
                         if (m_stayWhenFoundPlayer)

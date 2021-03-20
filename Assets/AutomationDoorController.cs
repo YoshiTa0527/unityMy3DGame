@@ -27,7 +27,7 @@ public class AutomationDoorController : MonoBehaviour
 
     private void FixedUpdate()
     {
-        if (m_gm.m_PlayerIsFound)
+        if (GameManager.PlayerIsFound)
         {
             ChangeDoorLight();
         }
@@ -42,7 +42,7 @@ public class AutomationDoorController : MonoBehaviour
         if (other.tag == "Player")
         {
             Debug.Log("接触Enter");
-            if (!m_gm.m_PlayerIsFound)
+            if (!GameManager.PlayerIsFound)
             {
                 m_door.ToList().ForEach(d => d.OpenDoor());
             }

@@ -23,8 +23,7 @@ public class PlayerControllerAI : MonoBehaviour
     [SerializeField] int m_maxHP = 20;
     /// <summary>HPスライダー</summary>
     [SerializeField] GameObject m_circleSlider = null;
-    /// <summary>敵に見つかっている状態か否か</summary>
-    public bool IsFound { get; set; }
+
     /// <summary>足音のオーディオクリップ</summary>
     [SerializeField] AudioClip m_footStepsAudioClip = null;
     [SerializeField, Range(0, 1)] float m_soundVolume;
@@ -53,7 +52,7 @@ public class PlayerControllerAI : MonoBehaviour
         if (m_startPoint) this.transform.position = m_startPoint.position;
         else { Debug.LogError($"{this.gameObject.name}::スタート地点を設定してください"); }
         m_currentHP = m_maxHP;
-        IsFound = false;
+
     }
 
     /*

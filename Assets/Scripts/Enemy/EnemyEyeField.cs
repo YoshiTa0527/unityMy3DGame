@@ -112,10 +112,7 @@ public class EnemyEyeField : MonoBehaviour
                 }
             }
         }
-        //else if (m_ec.GetEnemyStatus() != 1)
-        //{
-        //    m_ec.OnSerchPlayer();
-        //}
+
     }
 
 #if UNITY_EDITOR
@@ -146,8 +143,11 @@ public class EnemyEyeField : MonoBehaviour
         if (other.tag == "Player")
         {
             Debug.Log($"Exit{other.gameObject.name}");
+            if (m_ec.GetEnemyStatus() == 2)
+            {
+                m_ec.OnSerchPlayer();
+            }
             m_enterColider = false;
-            m_ec.OnSerchPlayer();
         }
     }
 }
